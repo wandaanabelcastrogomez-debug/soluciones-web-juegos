@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minijuego de lógica — Semana 3</title>
+<style>
+  :root {
+    --fondo: #0f1220;
+    --panel: #181c2f;
+    --panel2: #212640;
+    --texto: #e8ecff;
+    --suave: #a2aacb;
+    --acento: #7c9cff;
+    --ok: #38d39f;
+    --mal: #ff7a7a;
+    --borde: #2c3252;
+    --radio: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(1200px 600px at 50% -10%, #1b2140 0%, var(--fondo) 55%);
+    color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    min-height: 100vh;
+    padding: 20px 14px 56px;
+  }
+  .envoltura { max-width: 760px; margin: 0 auto; }
+  header.encabezado { margin-bottom: 18px; }
+  .etiqueta {
+    display: inline-block; font-size: .72rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--acento);
+    background: rgba(124,156,255,.12); border: 1px solid rgba(124,156,255,.35);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+  h1 { font-size: clamp(1.35rem, 4.2vw, 1.9rem); margin: 0 0 6px; line-height: 1.2; }
+  .subtitulo { color: var(--suave); font-size: .95rem; margin: 0; }
+  .tarjeta {
+    background: var(--panel); border: 1px solid var(--borde);
+    border-radius: var(--radio); padding: 16px 16px;
+  }
+  .explicacion { margin-bottom: 16px; }
+  .explicacion h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; color: var(--suave); margin: 0 0 8px; }
+  .explicacion p { margin: 0; font-size: 1rem; }
+  .barra {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    margin-bottom: 10px; font-size: .88rem; color: var(--suave); flex-wrap: wrap;
+  }
+  .barra strong { color: var(--texto); font-variant-numeric: tabular-nums; }
+  .pista-progreso { height: 8px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .pista-progreso > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acento), var(--ok)); transition: width .35s ease; }
+  .enunciado { font-size: 1.02rem; margin: 0 0 14px; }
+  .enunciado code, pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre {
+    background: #0b0e1a; border: 1px solid var(--borde); border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; margin: 0 0 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .92rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word;
+  }
+  .pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .bloque, .ficha, .hueco {
+    font-family: inherit; font-size: .92rem; cursor: pointer;
+    border-radius: 10px; transition: transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .bloque {
+    background: var(--panel2); color: var(--texto); border: 1px solid var(--borde);
+    padding: 9px 12px; text-align: left;
+  }
+  .bloque:hover { border-color: var(--acento); transform: translateY(-1px); }
+  .ficha {
+    background: var(--panel2); color: var(--texto); border: 1px solid var(--borde);
+    padding: 6px 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .ficha:hover { border-color: var(--acento); }
+  .hueco {
+    background: #0b0e1a; color: var(--suave); border: 1px dashed var(--acento);
+    padding: 2px 9px; margin: 0 2px; min-width: 46px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88rem;
+  }
+  .hueco.activo { border-style: solid; background: rgba(124,156,255,.16); color: var(--texto); }
+  .hueco.lleno { border-style: solid; color: var(--texto); }
+  .respuesta {
+    min-height: 62px; border: 1px dashed var(--borde); border-radius: 10px;
+    padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;
+  }
+  .respuesta:empty::after { content: "Toca los bloques en el orden correcto"; color: var(--suave); font-size: .85rem; }
+  .respuesta .bloque { width: 100%; }
+  .respuesta .bloque .num { color: var(--acento); margin-right: 8px; font-variant-numeric: tabular-nums; }
+  input[type="text"] {
+    width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--borde);
+    background: #0b0e1a; color: var(--texto); font-size: 1rem; margin-bottom: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  input[type="text"]:focus, button:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  button.principal {
+    background: var(--acento); color: #0b0e1a; border: 0; padding: 11px 20px;
+    border-radius: 10px; font-size: .97rem; font-weight: 700; cursor: pointer;
+  }
+  button.principal:hover { filter: brightness(1.08); }
+  button.secundario {
+    background: transparent; color: var(--suave); border: 1px solid var(--borde);
+    padding: 11px 16px; border-radius: 10px; font-size: .93rem; cursor: pointer;
+  }
+  button.secundario:hover { color: var(--texto); border-color: var(--acento); }
+  .feedback { margin-top: 16px; border-radius: 10px; padding: 12px 14px; font-size: .95rem; display: none; }
+  .feedback.visible { display: block; }
+  .feedback.exito { background: rgba(56,211,159,.12); border: 1px solid rgba(56,211,159,.45); }
+  .feedback.error { background: rgba(255,122,122,.1); border: 1px solid rgba(255,122,122,.4); }
+  .feedback .titulo { font-weight: 700; display: block; margin-bottom: 3px; }
+  .feedback.exito .titulo { color: var(--ok); }
+  .feedback.error .titulo { color: var(--mal); }
+  .final { text-align: center; }
+  .final .marcador { font-size: 2.6rem; font-weight: 800; margin: 4px 0 2px; }
+  .pie { color: var(--suave); font-size: .8rem; text-align: center; margin-top: 22px; }
+  .pie a { color: var(--acento); }
+  @media (max-width: 480px) {
+    body { padding: 14px 10px 40px; }
+    .tarjeta { padding: 14px 12px; }
+    pre { font-size: .84rem; }
+  }
+</style>
+</head>
+<body>
+<div class="envoltura">
+  <header class="encabezado">
+    <span class="etiqueta" id="etiqueta">Semana 3 · <span id="concepto">concepto</span></span>
+    <h1 id="titulo">Minijuego de lógica</h1>
+    <p class="subtitulo">Practica lógica de programación desde cero. Sin instalar nada.</p>
+  </header>
+
+  <section class="tarjeta explicacion" id="explicacion">
+    <h2>El concepto de esta semana</h2>
+    <p id="texto-explicacion"></p>
+  </section>
+
+  <section class="tarjeta">
+    <div class="barra">
+      <span>Reto <strong id="num-reto">1</strong> de <strong id="total-retos">0</strong></span>
+      <span>Puntos: <strong id="puntos">0</strong></span>
+    </div>
+    <div class="pista-progreso"><i id="barra-progreso"></i></div>
+
+    <div id="reto"></div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+  </section>
+
+  <p class="pie">Un minijuego nuevo cada semana · <span id="pie-semana">Semana 3</span></p>
+</div>
+
+<!--
+  DATOS DEL JUEGO
+  Todo el contenido editable está en este bloque JSON.
+  No hace falta tocar el motor de abajo.
+-->
+<script id="game-data" type="application/json">
+{
+  "semana": 3,
+  "concepto": "bucles",
+  "titulo": "Repetir sin copiar: bucles",
+  "explicacion": "Un bucle repite las mismas instrucciones muchas veces sin que las escribas de nuevo. En vez de copiar diez líneas iguales, escribes el paso una sola vez y le dices a la computadora cuántas veces repetirlo o hasta cuándo seguir. Con for repites un número conocido de veces; con while repites mientras una condición siga siendo verdadera.",
+  "retos": [
+    {
+      "tipo": "orden",
+      "enunciado": "Ordena las líneas del bucle que suma los números 1, 2 y 3 y luego muestra el total.",
+      "bloques": [
+        "let suma = 0;",
+        "for (let i = 1; i <= 3; i++) {",
+        "  suma = suma + i;",
+        "}",
+        "console.log(suma);"
+      ],
+      "pistas": [
+        "Antes del bucle hace falta una caja donde ir acumulando, empezando en cero.",
+        "La línea que suma va dentro del bucle; la que muestra el total, después.",
+        "El orden es: acumulador, cabecera del for, cuerpo que suma, llave de cierre y muestra final."
+      ],
+      "exito": "Perfecto: el acumulador empieza en 0 y crece en cada vuelta del bucle."
+    },
+    {
+      "tipo": "completar",
+      "enunciado": "Completa el bucle para que imprima del 1 al 5, incluido el 5.",
+      "plantilla": "for (let i = 1; i ___ 5; i___ ) {\n  console.log(i);\n}",
+      "respuesta": [
+        "<=",
+        "++"
+      ],
+      "opciones": [
+        [
+          "<=",
+          "<",
+          ">="
+        ],
+        [
+          "++",
+          "--",
+          "+1"
+        ]
+      ],
+      "pistas": [
+        "Si la comparación deja fuera al 5, el bucle se detiene antes de imprimirlo.",
+        "En cada vuelta el contador tiene que subir, no bajar.",
+        "Necesitas «menor o igual que» y el operador que suma uno al contador."
+      ],
+      "exito": "Bien: con <= el 5 entra en el bucle, y ++ hace avanzar el contador."
+    },
+    {
+      "tipo": "predecir",
+      "enunciado": "¿Cuántas líneas imprime este programa? (responde solo con el número)",
+      "codigo": "let n = 0;\nwhile (n < 3) {\n  console.log(n);\n  n = n + 1;\n}",
+      "aceptadas": [
+        "3",
+        "tres"
+      ],
+      "pistas": [
+        "No mires el valor que imprime: cuenta cuántas veces entra al cuerpo del bucle.",
+        "El bucle se repite mientras n sea menor que 3, y n empieza en 0.",
+        "Cada vuelta suma 1 a n; fíjate en cuántos valores distintos de n cumplen la condición."
+      ],
+      "exito": "Exacto: el cuerpo se ejecuta una vez por cada valor de n que cumple la condición."
+    },
+    {
+      "tipo": "predecir",
+      "enunciado": "¿Qué número imprime este programa al final?",
+      "codigo": "let total = 0;\nfor (let i = 1; i <= 4; i++) {\n  total = total + i;\n}\nconsole.log(total);",
+      "aceptadas": [
+        "10"
+      ],
+      "pistas": [
+        "El bucle no imprime nada: solo va acumulando dentro de total.",
+        "En cada vuelta suma el valor actual de i: primero 1, después 2, y así hasta 4.",
+        "El resultado es la suma de 1 + 2 + 3 + 4, un número de dos cifras que empieza por 1."
+      ],
+      "exito": "Correcto: la variable total guarda lo sumado en todas las vueltas, y se imprime una sola vez al salir."
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  var CONFIG = JSON.parse(document.getElementById("game-data").textContent);
+  var retos = CONFIG.retos || [];
+  var estado = { i: 0, puntos: 0, intentos: 0, pistasUsadas: 0, completados: 0, activo: null };
+
+  function $(id) { return document.getElementById(id); }
+  function crear(tag, clase, texto) {
+    var el = document.createElement(tag);
+    if (clase) el.className = clase;
+    if (texto !== undefined && texto !== null) el.textContent = texto;
+    return el;
+  }
+  function barajar(lista) {
+    var copia = lista.slice();
+    for (var k = copia.length - 1; k > 0; k--) {
+      var j = Math.floor(Math.random() * (k + 1));
+      var tmp = copia[k]; copia[k] = copia[j]; copia[j] = tmp;
+    }
+    return copia;
+  }
+  function normalizar(txt) {
+    return String(txt)
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u201c\u201d]/g, "'")
+      .replace(/\s+/g, " ")
+      .replace(/;+$/, "")
+      .trim();
+  }
+
+  /* ==CORE-START== */
+  var CORE = {
+    normalizar: normalizar,
+    barajar: barajar,
+    // Devuelve el estado inicial de la interfaz de un reto.
+    iniciarReto: function (reto) {
+      if (reto.tipo === "orden") {
+        var correcto = reto.bloques.slice();
+        var mezcla = barajar(correcto);
+        if (mezcla.join("|") === correcto.join("|") && correcto.length > 1) mezcla.reverse();
+        return { pool: mezcla, respuesta: [] };
+      }
+      if (reto.tipo === "completar") {
+        var huecos = String(reto.plantilla).split("___").length - 1;
+        var valores = [];
+        for (var h = 0; h < huecos; h++) valores.push(null);
+        return { valores: valores, activo: 0 };
+      }
+      return {};
+    },
+    // Comprueba si la solución propuesta es correcta.
+    comprobar: function (reto, vista) {
+      if (reto.tipo === "orden") {
+        if (vista.respuesta.length !== reto.bloques.length) return false;
+        for (var a = 0; a < reto.bloques.length; a++) {
+          if (vista.respuesta[a] !== reto.bloques[a]) return false;
+        }
+        return true;
+      }
+      if (reto.tipo === "completar") {
+        for (var b = 0; b < reto.respuesta.length; b++) {
+          if (normalizar(vista.valores[b] || "") !== normalizar(reto.respuesta[b])) return false;
+        }
+        return true;
+      }
+      if (reto.tipo === "predecir") {
+        var dado = normalizar(vista.texto || "");
+        if (!dado) return false;
+        for (var c = 0; c < reto.aceptadas.length; c++) {
+          if (normalizar(reto.aceptadas[c]) === dado) return true;
+        }
+        return false;
+      }
+      return false;
+    },
+    calcularPuntos: function (intentos, pistas) {
+      var p = 100 - intentos * 20 - pistas * 10;
+      return Math.max(20, p);
+    }
+  };
+  /* ==CORE-END== */
+
+  function pintarCabecera() {
+    $("concepto").textContent = CONFIG.concepto;
+    $("titulo").textContent = CONFIG.titulo;
+    $("texto-explicacion").textContent = CONFIG.explicacion;
+    $("total-retos").textContent = retos.length;
+    $("pie-semana").textContent = "Semana " + CONFIG.semana;
+    $("etiqueta").textContent = "Semana " + CONFIG.semana + " · " + CONFIG.concepto;
+    document.title = "Minijuego de lógica — Semana " + CONFIG.semana + ": " + CONFIG.concepto;
+  }
+
+  function pintarBarra() {
+    $("num-reto").textContent = Math.min(estado.i + 1, retos.length);
+    $("total-retos").textContent = retos.length;
+    $("puntos").textContent = estado.puntos;
+    var pct = retos.length ? Math.round((estado.completados / retos.length) * 100) : 0;
+    $("barra-progreso").style.width = pct + "%";
+  }
+
+  function feedback(tipo, titulo, texto) {
+    var caja = $("feedback");
+    caja.className = "feedback visible " + tipo;
+    caja.innerHTML = "";
+    caja.appendChild(crear("span", "titulo", titulo));
+    caja.appendChild(document.createTextNode(texto));
+  }
+  function limpiarFeedback() {
+    var caja = $("feedback");
+    caja.className = "feedback";
+    caja.innerHTML = "";
+  }
+
+  function mostrarFinal() {
+    limpiarFeedback();
+    var zona = $("reto");
+    zona.innerHTML = "";
+    var caja = crear("div", "final");
+    caja.appendChild(crear("p", null, "Has terminado los " + retos.length + " retos de la semana."));
+    caja.appendChild(crear("div", "marcador", estado.puntos + " pts"));
+    var maximo = retos.length * 100;
+    caja.appendChild(crear("p", null, "Puntuación máxima posible: " + maximo + ". Vuelve cuando quieras: cada semana hay un concepto nuevo."));
+    zona.appendChild(caja);
+    pintarBarra();
+  }
+
+  function pintarReto() {
+    limpiarFeedback();
+    if (estado.i >= retos.length) { mostrarFinal(); return; }
+    var reto = retos[estado.i];
+    estado.intentos = 0;
+    estado.pistasUsadas = 0;
+    estado.activo = CORE.iniciarReto(reto);
+
+    var zona = $("reto");
+    zona.innerHTML = "";
+    zona.appendChild(crear("p", "enunciado", reto.enunciado));
+
+    if (reto.tipo === "orden") pintarOrden(zona, reto);
+    else if (reto.tipo === "completar") pintarCompletar(zona, reto);
+    else pintarPredecir(zona, reto);
+
+    var acciones = crear("div", "acciones");
+    var botonPista = crear("button", "secundario", "Dame una pista");
+    botonPista.type = "button";
+    botonPista.setAttribute("data-testid", "pista");
+    botonPista.addEventListener("click", function () { pedirPista(reto); });
+    var boton = crear("button", "principal", "Comprobar");
+    boton.type = "button";
+    boton.id = "comprobar";
+    boton.setAttribute("data-testid", "comprobar");
+    boton.addEventListener("click", function () { comprobar(reto); });
+    acciones.appendChild(boton);
+    acciones.appendChild(botonPista);
+    zona.appendChild(acciones);
+
+    pintarBarra();
+  }
+
+  function pintarOrden(zona, reto) {
+    var pool = crear("div", "pool");
+    pool.id = "pool";
+    var respuesta = crear("div", "respuesta");
+    respuesta.id = "respuesta";
+
+    function repintar() {
+      pool.innerHTML = "";
+      estado.activo.pool.forEach(function (texto) {
+        var b = crear("button", "bloque", texto);
+        b.type = "button";
+        b.setAttribute("data-testid", "bloque-disponible");
+        b.addEventListener("click", function () {
+          estado.activo.respuesta.push(texto);
+          estado.activo.pool.splice(estado.activo.pool.indexOf(texto), 1);
+          repintar();
+        });
+        pool.appendChild(b);
+      });
+      respuesta.innerHTML = "";
+      estado.activo.respuesta.forEach(function (texto, idx) {
+        var b = crear("button", "bloque");
+        b.type = "button";
+        b.setAttribute("data-testid", "bloque-colocado");
+        b.appendChild(crear("span", "num", String(idx + 1) + "."));
+        b.appendChild(document.createTextNode(texto));
+        b.addEventListener("click", function () {
+          estado.activo.respuesta.splice(idx, 1);
+          estado.activo.pool.push(texto);
+          repintar();
+        });
+        respuesta.appendChild(b);
+      });
+    }
+    repintar();
+    zona.appendChild(pool);
+    zona.appendChild(respuesta);
+  }
+
+  function pintarCompletar(zona, reto) {
+    var cont = crear("div", "zona-completar");
+    zona.appendChild(cont);
+    repintarCompletar(cont, reto);
+  }
+
+  function repintarCompletar(cont, reto) {
+    cont.innerHTML = "";
+    var partes = String(reto.plantilla).split("___");
+    var pre = crear("pre");
+    var codigo = crear("code");
+    for (var p = 0; p < partes.length; p++) {
+      codigo.appendChild(document.createTextNode(partes[p]));
+      if (p < partes.length - 1) {
+        (function (indice) {
+          var valor = estado.activo.valores[indice];
+          var hueco = crear("button", "hueco", valor || "___");
+          hueco.type = "button";
+          hueco.setAttribute("data-testid", "hueco");
+          hueco.setAttribute("data-indice", String(indice));
+          if (valor) hueco.className = "hueco lleno";
+          if (estado.activo.activo === indice) hueco.className += " activo";
+          hueco.addEventListener("click", function () {
+            if (estado.activo.valores[indice]) {
+              estado.activo.valores[indice] = null;
+            }
+            estado.activo.activo = indice;
+            repintarCompletar(cont, reto);
+          });
+          codigo.appendChild(hueco);
+        })(p);
+      }
+    }
+    pre.appendChild(codigo);
+    cont.appendChild(pre);
+
+    var paleta = crear("div", "pool paleta");
+    var opciones = [];
+    (reto.opciones || []).forEach(function (grupo) {
+      grupo.forEach(function (op) { if (opciones.indexOf(op) === -1) opciones.push(op); });
+    });
+    opciones.forEach(function (op) {
+      var f = crear("button", "ficha", op);
+      f.type = "button";
+      f.setAttribute("data-testid", "ficha");
+      f.setAttribute("data-valor", op);
+      f.addEventListener("click", function () {
+        var destino = estado.activo.activo;
+        if (destino === null || destino === undefined) {
+          for (var v = 0; v < estado.activo.valores.length; v++) {
+            if (!estado.activo.valores[v]) { destino = v; break; }
+          }
+        }
+        if (destino === null || destino === undefined) destino = 0;
+        estado.activo.valores[destino] = op;
+        var siguiente = null;
+        for (var w = destino + 1; w < estado.activo.valores.length; w++) {
+          if (!estado.activo.valores[w]) { siguiente = w; break; }
+        }
+        estado.activo.activo = siguiente === null ? destino : siguiente;
+        repintarCompletar(cont, reto);
+      });
+      paleta.appendChild(f);
+    });
+    cont.appendChild(paleta);
+  }
+
+  function pintarPredecir(zona, reto) {
+    var pre = crear("pre");
+    var code = crear("code", null, reto.codigo);
+    pre.appendChild(code);
+    zona.appendChild(pre);
+    var entrada = document.createElement("input");
+    entrada.type = "text";
+    entrada.id = "entrada";
+    entrada.setAttribute("data-testid", "entrada");
+    entrada.setAttribute("placeholder", "Escribe exactamente lo que imprime");
+    entrada.setAttribute("autocomplete", "off");
+    entrada.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); comprobar(reto); }
+    });
+    zona.appendChild(entrada);
+  }
+
+  function pedirPista(reto) {
+    estado.pistasUsadas = Math.min(estado.pistasUsadas + 1, reto.pistas.length);
+    var indice = Math.min(estado.pistasUsadas - 1, reto.pistas.length - 1);
+    feedback("error", "Pista " + (indice + 1) + " de " + reto.pistas.length + ": ", reto.pistas[indice]);
+  }
+
+  function valorActual(reto) {
+    if (reto.tipo === "orden") return { respuesta: estado.activo.respuesta };
+    if (reto.tipo === "completar") return { valores: estado.activo.valores };
+    var entrada = document.getElementById("entrada");
+    return { texto: entrada ? entrada.value : "" };
+  }
+
+  function comprobar(reto) {
+    var vista = valorActual(reto);
+    if (reto.tipo === "completar") {
+      for (var h = 0; h < estado.activo.valores.length; h++) {
+        if (!estado.activo.valores[h]) {
+          feedback("error", "Falta un hueco. ", "Toca un hueco y luego una ficha para rellenarlo.");
+          return;
+        }
+      }
+    }
+    if (reto.tipo === "orden" && estado.activo.respuesta.length === 0) {
+      feedback("error", "Aún no has colocado nada. ", "Toca los bloques de arriba para ponerlos en orden.");
+      return;
+    }
+    if (reto.tipo === "predecir" && !String(vista.texto).trim()) {
+      feedback("error", "Escribe tu respuesta. ", "Puedes probar con un número o con una palabra.");
+      return;
+    }
+
+    if (CORE.comprobar(reto, vista)) {
+      var ganados = CORE.calcularPuntos(estado.intentos, estado.pistasUsadas);
+      estado.puntos += ganados;
+      estado.completados += 1;
+      pintarBarra();
+      feedback("exito", "¡Correcto! +" + ganados + " puntos. ", reto.exito || "Esa es la lógica. Ya puedes pasar al siguiente reto.");
+      var acciones = document.querySelector("#reto .acciones");
+      if (acciones) {
+        acciones.innerHTML = "";
+        var siguiente = crear("button", "principal", estado.i + 1 >= retos.length ? "Ver mi resultado" : "Siguiente reto");
+        siguiente.type = "button";
+        siguiente.setAttribute("data-testid", "siguiente");
+        siguiente.addEventListener("click", function () {
+          estado.i += 1;
+          pintarReto();
+        });
+        acciones.appendChild(siguiente);
+      }
+      return;
+    }
+
+    estado.intentos += 1;
+    var indice = Math.min(estado.intentos - 1, reto.pistas.length - 1);
+    var esUltima = estado.intentos >= reto.pistas.length;
+    feedback(
+      "error",
+      "Todavía no. ",
+      (esUltima ? "Repasa esta idea: " : "Pista " + (indice + 1) + ": ") + reto.pistas[indice]
+    );
+  }
+
+  function init() {
+    if (!retos.length) {
+      $("reto").textContent = "Este minijuego no tiene retos configurados.";
+      return;
+    }
+    pintarCabecera();
+    pintarReto();
+    window.__minijuego = { config: CONFIG, estado: estado, core: CORE, comprobar: comprobar };
+    window.__listo = true;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
