@@ -1,0 +1,140 @@
+/* style.css — todo el aspecto visual de los minijuegos */
+:root {
+    --fondo: #0f1220;
+    --panel: #181c2f;
+    --panel2: #212640;
+    --texto: #e8ecff;
+    --suave: #a2aacb;
+    --acento: #7c9cff;
+    --ok: #38d39f;
+    --mal: #ff7a7a;
+    --borde: #2c3252;
+    --radio: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(1200px 600px at 50% -10%, #1b2140 0%, var(--fondo) 55%);
+    color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    min-height: 100vh;
+    padding: 20px 14px 56px;
+  }
+  .envoltura { max-width: 760px; margin: 0 auto; }
+  header.encabezado { margin-bottom: 18px; }
+  .etiqueta {
+    display: inline-block; font-size: .72rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--acento);
+    background: rgba(124,156,255,.12); border: 1px solid rgba(124,156,255,.35);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+  h1 { font-size: clamp(1.35rem, 4.2vw, 1.9rem); margin: 0 0 6px; line-height: 1.2; }
+  .subtitulo { color: var(--suave); font-size: .95rem; margin: 0; }
+  .tarjeta {
+    background: var(--panel); border: 1px solid var(--borde);
+    border-radius: var(--radio); padding: 16px 16px;
+  }
+  .explicacion { margin-bottom: 16px; }
+  .explicacion h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; color: var(--suave); margin: 0 0 8px; }
+  .explicacion p { margin: 0; font-size: 1rem; }
+  .barra {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    margin-bottom: 10px; font-size: .88rem; color: var(--suave); flex-wrap: wrap;
+  }
+  .barra strong { color: var(--texto); font-variant-numeric: tabular-nums; }
+  .pista-progreso { height: 8px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .pista-progreso > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--acento), var(--ok)); transition: width .35s ease; }
+  .enunciado { font-size: 1.02rem; margin: 0 0 14px; }
+  .enunciado code, pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  pre {
+    background: #0b0e1a; border: 1px solid var(--borde); border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; margin: 0 0 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .92rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word;
+  }
+  .pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .bloque, .ficha, .hueco {
+    font-family: inherit; font-size: .92rem; cursor: pointer;
+    border-radius: 10px; transition: transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .bloque {
+    background: var(--panel2); color: var(--texto); border: 1px solid var(--borde);
+    padding: 9px 12px; text-align: left;
+  }
+  .bloque:hover { border-color: var(--acento); transform: translateY(-1px); }
+  .ficha {
+    background: var(--panel2); color: var(--texto); border: 1px solid var(--borde);
+    padding: 6px 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .ficha:hover { border-color: var(--acento); }
+  .hueco {
+    background: #0b0e1a; color: var(--suave); border: 1px dashed var(--acento);
+    padding: 2px 9px; margin: 0 2px; min-width: 46px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88rem;
+  }
+  .hueco.activo { border-style: solid; background: rgba(124,156,255,.16); color: var(--texto); }
+  .hueco.lleno { border-style: solid; color: var(--texto); }
+  .respuesta {
+    min-height: 62px; border: 1px dashed var(--borde); border-radius: 10px;
+    padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;
+  }
+  .respuesta:empty::after { content: "Toca los bloques en el orden correcto"; color: var(--suave); font-size: .85rem; }
+  .respuesta .bloque { width: 100%; }
+  .respuesta .bloque .num { color: var(--acento); margin-right: 8px; font-variant-numeric: tabular-nums; }
+  input[type="text"] {
+    width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--borde);
+    background: #0b0e1a; color: var(--texto); font-size: 1rem; margin-bottom: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  input[type="text"]:focus, button:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  button.principal {
+    background: var(--acento); color: #0b0e1a; border: 0; padding: 11px 20px;
+    border-radius: 10px; font-size: .97rem; font-weight: 700; cursor: pointer;
+  }
+  button.principal:hover { filter: brightness(1.08); }
+  button.secundario {
+    background: transparent; color: var(--suave); border: 1px solid var(--borde);
+    padding: 11px 16px; border-radius: 10px; font-size: .93rem; cursor: pointer;
+  }
+  button.secundario:hover { color: var(--texto); border-color: var(--acento); }
+  .feedback { margin-top: 16px; border-radius: 10px; padding: 12px 14px; font-size: .95rem; display: none; }
+  .feedback.visible { display: block; }
+  .feedback.exito { background: rgba(56,211,159,.12); border: 1px solid rgba(56,211,159,.45); }
+  .feedback.error { background: rgba(255,122,122,.1); border: 1px solid rgba(255,122,122,.4); }
+  .feedback .titulo { font-weight: 700; display: block; margin-bottom: 3px; }
+  .feedback.exito .titulo { color: var(--ok); }
+  .feedback.error .titulo { color: var(--mal); }
+  .final { text-align: center; }
+  .final .marcador { font-size: 2.6rem; font-weight: 800; margin: 4px 0 2px; }
+  .pie { color: var(--suave); font-size: .8rem; text-align: center; margin-top: 22px; }
+  .pie a { color: var(--acento); }
+  @media (max-width: 480px) {
+    body { padding: 14px 10px 40px; }
+    .tarjeta { padding: 14px 12px; }
+    pre { font-size: .84rem; }
+  }
+
+  /* ---------- portal ---------- */
+  .portal-intro { color: var(--suave); margin: 0 0 18px; font-size: .95rem; }
+  .lista-juegos { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 620px) { .lista-juegos { grid-template-columns: 1fr 1fr; } }
+  .tarjeta-juego {
+    display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer;
+    background: var(--panel); color: var(--texto); border: 1px solid var(--borde);
+    border-radius: var(--radio); padding: 15px 16px; font-family: inherit;
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .tarjeta-juego:hover { border-color: var(--acento); transform: translateY(-2px); }
+  .tarjeta-juego .semana { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--acento); }
+  .tarjeta-juego .nombre { font-size: 1.02rem; font-weight: 700; line-height: 1.3; }
+  .tarjeta-juego .concepto-mini { font-size: .88rem; color: var(--suave); }
+  .tarjeta-juego .jugar { margin-top: 8px; font-size: .88rem; font-weight: 700; color: var(--acento); }
+  .volver {
+    background: transparent; color: var(--suave); border: 1px solid var(--borde);
+    border-radius: 999px; padding: 7px 14px; font-size: .85rem; cursor: pointer;
+    font-family: inherit; margin-bottom: 14px;
+  }
+  .volver:hover { color: var(--texto); border-color: var(--acento); }
+  .cuenta { color: var(--suave); font-size: .82rem; margin: 0 0 14px; }
