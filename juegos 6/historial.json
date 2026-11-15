@@ -1,0 +1,46 @@
+{
+  "juegos": [
+    {
+      "semana": 1,
+      "concepto": "variables",
+      "titulo": "Cajas con nombre: variables",
+      "archivo": "semana-01.html",
+      "fecha": "2025-11-14"
+    },
+    {
+      "semana": 2,
+      "concepto": "condicionales",
+      "titulo": "Decisiones en el camino: condicionales",
+      "archivo": "semana-02.html",
+      "fecha": "2025-11-14"
+    },
+    {
+      "semana": 3,
+      "concepto": "bucles",
+      "titulo": "Repetir sin copiar: bucles",
+      "archivo": "semana-03.html",
+      "fecha": "2025-11-14"
+    },
+    {
+      "semana": 4,
+      "concepto": "funciones",
+      "titulo": "Máquinas reutilizables: funciones",
+      "archivo": "semana-04.html",
+      "fecha": "2025-11-14"
+    },
+    {
+      "semana": 5,
+      "concepto": "arrays/listas",
+      "titulo": "Listas ordenadas: arrays",
+      "archivo": "semana-05.html",
+      "fecha": "2025-11-14"
+    },
+    {
+      "semana": 6,
+      "concepto": "recursión",
+      "titulo": "Mirarse al espejo: recursión",
+      "archivo": "semana-06.html",
+      "fecha": "2025-11-14"
+    }
+  ]
+}
