@@ -6,6 +6,13 @@
       "titulo": "Cajas con nombre: variables",
       "archivo": "semana-01.html",
       "fecha": "2025-11-14"
+    },
+    {
+      "semana": 2,
+      "concepto": "condicionales",
+      "titulo": "Decisiones en el camino: condicionales",
+      "archivo": "semana-02.html",
+      "fecha": "2025-11-14"
     }
   ]
 }
