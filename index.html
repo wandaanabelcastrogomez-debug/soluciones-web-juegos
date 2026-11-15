@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minijuegos de lógica — HTML, CSS y JS separados</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="envoltura">
+
+  <!-- ============ PORTAL: todos los juegos ============ -->
+  <div id="portal">
+    <header class="encabezado">
+      <span class="etiqueta">Todo en un solo archivo</span>
+      <h1>Minijuegos de lógica</h1>
+      <p class="subtitulo">Aprende lógica de programación desde cero, reto a reto. Sin instalar nada.</p>
+    </header>
+    <p class="portal-intro">
+      <strong id="total-juegos">0</strong> juegos y <strong id="total-retos-todos">0</strong> retos dentro de este único
+      <code>index.html</code>: HTML, CSS y JavaScript van aquí dentro, sin archivos externos.
+    </p>
+    <div class="lista-juegos" id="lista-juegos"></div>
+    <p class="pie">Si guardas este archivo en tu ordenador, funciona igual: todo el juego viaja con él.</p>
+  </div>
+
+  <!-- ============ VISTA DE JUEGO ============ -->
+  <div id="vista-juego" hidden>
+    <button class="volver" id="volver-portal" type="button">← Ver todos los juegos</button>
+
+    <header class="encabezado">
+      <span class="etiqueta" id="etiqueta">Juego · <span id="concepto">concepto</span></span>
+      <h1 id="titulo">Minijuego de lógica</h1>
+      <p class="subtitulo" id="subtitulo">Practica lógica de programación desde cero.</p>
+    </header>
+
+    <section class="tarjeta explicacion" id="explicacion">
+      <h2>El concepto</h2>
+      <p id="texto-explicacion"></p>
+    </section>
+
+    <section class="tarjeta">
+      <div class="barra">
+        <span>Reto <strong id="num-reto">1</strong> de <strong id="total-retos">0</strong></span>
+        <span>Puntos: <strong id="puntos">0</strong></span>
+      </div>
+      <div class="pista-progreso"><i id="barra-progreso"></i></div>
+
+      <div id="reto"></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+    </section>
+
+    <p class="pie">Un minijuego nuevo cada semana · <span id="pie-semana">Semana 1</span></p>
+  </div>
+</div>
+
+<!-- datos y motor, cada uno en su archivo -->
+<script src="datos.js"></script>
+<script src="juego.js"></script>
+</body>
+</html>
